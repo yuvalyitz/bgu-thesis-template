@@ -1,0 +1,221 @@
+% ===========================================================================
+% main.tex -- the English part of the thesis (pdfLaTeX + biber).
+%
+% The Hebrew summary/abstract live in hebrew_pages.tex (XeLaTeX). The two
+% PDFs are merged by merge_thesis.py; run ./compile_thesis.sh to build all.
+% See README.md for the whole picture and for the cross-document link rules.
+% ===========================================================================
+\documentclass[12pt,a4paper,oneside,onecolumn]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{etoolbox}
+
+% ---- Page layout (BGU guidelines: A4, page number top centre, no headers) ----
+\usepackage[a4paper,twoside,inner=24mm,outer=24mm,top=28mm,bottom=32mm]{geometry}
+% NOTE: `twoside` in geometry makes \cleardoublepage insert blank pages so that
+% every chapter starts on an odd page (as in a printed, double-sided thesis).
+% For a screen-only PDF add `openany` to the \documentclass options.
+\usepackage{microtype}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}\chead{\thepage}\rhead{}
+\lfoot{}\cfoot{}\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{\pagestyle{fancy}}
+\setlength{\headheight}{15pt}
+
+% ---- Maths and theorem environments ----
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[amsmath,thmmarks]{ntheorem}
+\usepackage{thmtools}            % \begin{restatable}...: state in the intro, restate in a chapter
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{definition}{Definition}
+\newtheorem{openq}{Open Question}
+
+\theoremstyle{nonumberplain}
+\theoremheaderfont{\itshape}
+\theorembodyfont{\normalfont}
+\theoremseparator{.}
+\theoremsymbol{\ensuremath{\square}}
+\newtheorem{proof}{Proof}
+% back to defaults
+\theoremstyle{plain}
+\theoremheaderfont{\normalfont\bfseries}
+\theorembodyfont{\itshape}
+\theoremseparator{}
+\theoremsymbol{}
+
+\usepackage{chngcntr}
+\counterwithin{theorem}{chapter}   % Theorem 2.1, Lemma 2.2, ...
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\NP}{\textnormal{NP}}
+\newcommand{\PP}{\textnormal{P}}
+\newcommand{\FPT}{\textnormal{FPT}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% ---- Misc ----
+\usepackage[shortlabels]{enumitem}
+\usepackage[ruled,vlined,algochapter]{algorithm2e}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\setcounter{secnumdepth}{4}
+
+% ---- Bibliography (biblatex + biber). The Hebrew document loads the same
+%      .bib with the same style, so citation labels agree across both parts. ----
+\usepackage[backend=biber,natbib=true,style=alphabetic,sorting=none,
+            maxcitenames=2,maxbibnames=50,doi=true,url=true,isbn=false,eprint=false]{biblatex}
+\renewcommand*{\multicitedelim}{\addcomma\space}
+\addbibresource{bibliography/references.bib}
+% Every bibliography entry also gets a named anchor equal to its bib key, so
+% the Hebrew pages can \hyperlink{<bibkey>}{...} straight to an entry.
+\AtEveryBibitem{\hypertarget{\thefield{entrykey}}{}}
+
+% ---- Table of contents ----
+\usepackage[nottoc]{tocbibind}
+\usepackage{tocloft}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftchapdotsep}{\cftnodots}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\renewcommand{\cftsecdotsep}{1}
+\setlength{\cftbeforechapskip}{14pt}
+\setlength{\cftbeforesecskip}{0pt}
+
+% ---- Links and cross-document references ----
+% xr-hyper must come before hyperref. It lets this document read labels from
+% the Hebrew build (prefix he-), which is how the English TOC learns the page
+% numbers of the Hebrew summary and abstract.
+\usepackage{xr-hyper}
+\usepackage[urlcolor=blue!50!black,linkcolor=blue!50!black,citecolor=green!40!black,colorlinks]{hyperref}
+\usepackage{lastpage}   % defines the LastPage label; hebrew_pages.tex continues numbering after it
+\IfFileExists{build/hebrew_pages.aux}{\externaldocument[he-]{build/hebrew_pages}}{}
+
+\usepackage[capitalise]{cleveref}
+
+% \linkedsection{<key>}{<Title>}: a \section the Hebrew TOC can link to and read the
+% number and page of. It expands to
+%   \section[<Title>]{\hypertarget{target:sec:<key>}{}<Title>}\label{toc:sec:<key>}
+% The anchor sits INSIDE the heading so a click lands on the heading itself even
+% when the section starts a new page (an anchor placed before \section would end
+% up at the bottom of the previous page). Add your own \label{sec:...} after it
+% for \Cref if you like.
+\newcommand{\linkedsection}[2]{\section[#2]{\hypertarget{target:sec:#1}{}#2}\label{toc:sec:#1}}
+\Crefname{observation}{Observation}{Observations}
+\Crefname{openq}{Open Question}{Open Questions}
+
+% ---- Spacing ----
+\usepackage{setspace}
+\setstretch{1.1}
+\setlength{\parskip}{0.25em plus 0.1em minus 0.05em}
+\setlength{\parindent}{2em}
+
+% ---- Who and what: title, author, supervisor, department, date ----
+\input{thesis_info}
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Cover and title page: no page numbers at all.
+% ---------------------------------------------------------------------------
+\pagenumbering{gobble}
+\begingroup
+  \makeatletter\let\ps@plain\ps@empty\makeatother
+  \input{Main_pages/cover_page}
+  \input{Main_pages/title_page}
+\endgroup
+
+% \frontmatter would insert a blank page after the title page in twoside
+% mode; suppress that one time.
+\makeatletter
+\let\orig@cleardoublepage\cleardoublepage
+\let\cleardoublepage\clearpage
+\frontmatter
+\let\cleardoublepage\orig@cleardoublepage
+\makeatother
+\pagenumbering{roman}
+
+% ---------------------------------------------------------------------------
+% Front matter: abstract, acknowledgements, table of contents.
+% ---------------------------------------------------------------------------
+% \include{Main_pages/affidavit}   % if your department requires it
+\phantomsection
+\addcontentsline{toc}{chapter}{Abstract}
+\include{Main_pages/abstract}
+\include{Main_pages/acknowledgements}
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+\clearpage
+% \listoffigures \clearpage
+% \listoftables  \clearpage
+
+% ---------------------------------------------------------------------------
+% Main matter. Every chapter follows the same four-line pattern:
+%   \cleardoublepage \phantomsection \hypertarget{chapter:<key>}{} \chapter{..} \label{chapter:<key>}
+% The \hypertarget is what the Hebrew TOC links to (\hyperlink{chapter:<key>}),
+% the \label is what \Cref and the Hebrew TOC numbers/pages read.
+% ---------------------------------------------------------------------------
+\mainmatter
+
+\cleardoublepage
+\phantomsection
+\hypertarget{chapter:intro}{}%
+\chapter{Introduction}
+\label{chapter:intro}
+\input{content/introduction}
+
+\cleardoublepage
+\phantomsection
+\hypertarget{chapter:prelim}{}%
+\chapter{Preliminaries}
+\label{chapter:prelim}
+\input{content/preliminaries}
+
+\cleardoublepage
+\phantomsection
+\hypertarget{chapter:results}{}%
+\chapter{A Chapter with Results}
+\label{chapter:results}
+\input{content/results}
+
+% An unnumbered chapter: it needs \addcontentsline to appear in the TOC.
+\cleardoublepage
+\hypertarget{chapter:conclusion}{}%
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+\label{chapter:conclusion}
+\input{content/conclusion}
+
+% ---------------------------------------------------------------------------
+% Back matter: bibliography, then the TOC lines for the Hebrew pages.
+% ---------------------------------------------------------------------------
+\backmatter
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+\hypertarget{chapter:bib}{}
+\AtNextBibliography{\label{toc:bibliography}}   % page of the bibliography heading, read by the Hebrew TOC
+\printbibliography
+
+% The Hebrew pages are appended after this document by merge_thesis.py, so
+% their TOC entries are written by hand. The page numbers come from labels in
+% hebrew_pages.tex (via xr-hyper, prefix he-); the last argument is the
+% hyperref anchor the entry links to, defined in the Hebrew document.
+\addtocontents{toc}{\protect\contentsline{chapter}{Hebrew Summary}{\getpagerefnumber{he-toc:hebrew:summary}}{chapter:hebrew:summary}}
+\addtocontents{toc}{\protect\contentsline{chapter}{Hebrew Abstract}{\getpagerefnumber{he-toc:hebrew:abstract}}{chapter:hebrew:abstract}}
+
+\clearpage
+\end{document}

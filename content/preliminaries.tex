@@ -1,0 +1,30 @@
+% ---------------------------------------------------------------------------
+% content/preliminaries.tex -- notation, definitions, a lemma with a proof.
+% ---------------------------------------------------------------------------
+
+\linkedsection{notation}{Notation}
+
+Throughout, $\mathcal{J}=\{1,\ldots,n\}$ is a set of jobs.
+Job $j$ has a processing time $p_j\in\mathbb{N}$ and a due date $d_j\in\mathbb{N}$, and must be executed during the half-open interval $[d_j-p_j,d_j)$ on one of $m$ identical machines.
+For a set $S\subseteq\mathcal{J}$ we write $w(S)=\sum_{j\in S}w_j$.
+
+The three-field notation $\alpha\mid\beta\mid\gamma$ of Graham et al.\ describes the machine environment, the job characteristics and the objective, respectively; for example $P\,|\,p_j=p\,|\,\sum w_jU_j$.
+
+\linkedsection{graphs}{Conflict Graphs}
+
+\begin{definition}
+\label{def:conflictgraph}\hypertarget{target:def:conflictgraph}{}%
+The \emph{conflict graph} of an instance is the graph $G=(\mathcal{J},E)$ with $\{i,j\}\in E$ if and only if $[d_i-p_i,d_i)\cap[d_j-p_j,d_j)\neq\emptyset$.
+\end{definition}
+
+\begin{lemma}
+\label{lem:interval}
+The conflict graph of every instance is an interval graph, and a set of jobs can be scheduled on one machine if and only if it is an independent set of the conflict graph.
+\end{lemma}
+
+\begin{proof}
+The first claim holds by definition, since every vertex is represented by an interval and adjacency is intersection.
+For the second claim, two jobs can share a machine if and only if their intervals are disjoint, which is exactly non-adjacency in $G$.
+\end{proof}
+
+\Cref{lem:interval} is the reason interval graphs appear throughout \Cref{chapter:results}; \Cref{fig:example} shows one.

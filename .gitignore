@@ -1,0 +1,17 @@
+build/
+*.aux
+*.log
+*.out
+*.toc
+*.thm
+*.fls
+*.fdb_latexmk
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.synctex.gz
+*.pdf
+!Main_pages/*.png
+__pycache__/
+.DS_Store

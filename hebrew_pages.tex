@@ -1,0 +1,221 @@
+% ===========================================================================
+% hebrew_pages.tex -- the Hebrew part of the thesis (XeLaTeX + biber).
+%
+% It is a SEPARATE document. It reads the English build's labels through
+% xr-hyper (prefix en-) so that its table of contents shows the English
+% chapter/section numbers and page numbers, continues the English page
+% numbering, and links into the English PDF by name; merge_thesis.py turns
+% those names into working links after the two PDFs are concatenated.
+%
+% Fonts: Linux Libertine O (Latin), David CLM (Hebrew), Latin Modern Roman
+% (Latin text inside Hebrew paragraphs). All three ship with TeX Live; on
+% macOS run ./compile_thesis.sh install-fonts once. See README.md.
+% ===========================================================================
+\documentclass{article}
+
+\usepackage{xcolor}            % must be loaded before bidi (which polyglossia pulls in)
+\usepackage{xr-hyper}          % read labels from build/main.aux (prefix en-)
+\usepackage{amsmath}
+\usepackage[urlcolor=blue!50!black,linkcolor=blue!50!black,citecolor=green!40!black,colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{polyglossia}
+\usepackage{fontspec}
+\usepackage{amssymb}
+\usepackage{setspace}
+\setstretch{1.25}
+\usepackage{etoolbox}
+
+% Same page geometry as main.tex (bottom margin differs slightly: the Hebrew
+% pages have no running header, so the text block can be a little taller).
+\usepackage[a4paper,twoside,inner=24mm,outer=24mm,top=28mm,bottom=22mm]{geometry}
+
+% The SAME bibliography settings and .bib file as main.tex. Alphabetic labels
+% are derived from author and year, so [Kar72] here is [Kar72] in the English
+% bibliography, and the citation links resolve to the English entries after
+% the merge.
+\usepackage[backend=biber,natbib=true,style=alphabetic,sorting=none,
+            maxcitenames=2,maxbibnames=50,doi=true,url=true,isbn=false,eprint=false]{biblatex}
+\renewcommand*{\multicitedelim}{\addcomma\space}
+\addbibresource{bibliography/references.bib}
+
+\setmainfont{Linux Libertine O}
+\setdefaultlanguage{hebrew}    % headings and paragraphs are right-to-left
+\setotherlanguage{english}
+\newfontfamily\hebrewfont[Script=Hebrew,Scale=MatchLowercase]{David CLM}
+
+\usepackage{bidi}
+
+% Latin text inside a Hebrew paragraph: keep it left-to-right and in a Latin
+% font.  \LR comes from bidi.  \en{...} is for words, \hcite{...} for citations.
+\newcommand{\en}[1]{\beginL{\fontspec{Latin Modern Roman}#1}\endL}
+\newcommand{\hcite}[1]{\mbox{\LR{{\fontspec{Latin Modern Roman}\cite{#1}}}}}
+
+% ---- Cross-document references into the English build ----
+% The build script compiles English first, so build/main.aux exists.
+\IfFileExists{build/main.aux}{\externaldocument[en-]{build/main}}{}
+% Numbers and pages of English headings, printed left-to-right and WITHOUT
+% their own link (the surrounding \hyperlink provides the link; merge_thesis.py
+% needs exactly one destination per link).
+\newcommand{\englishTOCpage}[1]{\LR{\pageref*{en-#1}}}
+\newcommand{\englishTOCnumber}[1]{\LR{\ref*{en-#1}}}
+% A clickable reference to an English theorem/figure/definition that prints its number:
+\newcommand{\enref}[2]{\hyperlink{target:#1}{\englishTOCnumber{#2}}}
+
+\input{thesis_info}
+
+\begin{document}
+% Continue the Arabic page numbering of the English part (LastPage is
+% defined there by the lastpage package).
+\setcounter{page}{\numexpr\getpagerefnumber{en-LastPage}+1\relax}
+\pagestyle{empty}
+\selectlanguage{hebrew}
+
+% ---------------------------------------------------------------------------
+% Hebrew table of contents. One line per English entry:
+%   \englishTOCnumber{<label>}  the chapter/section number from the English build
+%   \hyperlink{<anchor>}{...}    the clickable Hebrew title
+%   \englishTOCpage{<label>}    the page number from the English build
+% Chapters: anchor = label = chapter:<key>. Sections: anchor target:sec:<key>,
+% label toc:sec:<key>. Unnumbered chapters have no number.
+% ---------------------------------------------------------------------------
+\begin{center}
+{\Huge\bfseries תוכן עניינים}
+\end{center}
+\vspace{1.2em}
+\noindent
+\begin{flushright}
+{\Large
+\englishTOCnumber{chapter:intro}.\ \hyperlink{chapter:intro}{מבוא}
+\dotfill \englishTOCpage{chapter:intro}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:motivation}\ \hyperlink{target:sec:motivation}{מוטיבציה}
+\dotfill \englishTOCpage{toc:sec:motivation}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:contribution}\ \hyperlink{target:sec:contribution}{תרומת המחקר ומבנה החיבור}
+\dotfill \englishTOCpage{toc:sec:contribution}\\[0.2em]
+\englishTOCnumber{chapter:prelim}.\ \hyperlink{chapter:prelim}{מושגים ומונחים}
+\dotfill \englishTOCpage{chapter:prelim}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:notation}\ \hyperlink{target:sec:notation}{סימונים}
+\dotfill \englishTOCpage{toc:sec:notation}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:graphs}\ \hyperlink{target:sec:graphs}{גרפי קונפליקט}
+\dotfill \englishTOCpage{toc:sec:graphs}\\[0.2em]
+\englishTOCnumber{chapter:results}.\ \hyperlink{chapter:results}{פרק עם תוצאות}
+\dotfill \englishTOCpage{chapter:results}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:hardness}\ \hyperlink{target:sec:hardness}{תוצאות קושי}
+\dotfill \englishTOCpage{toc:sec:hardness}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:algorithms}\ \hyperlink{target:sec:algorithms}{אלגוריתמים}
+\dotfill \englishTOCpage{toc:sec:algorithms}\\[0.2em]
+\hyperlink{chapter:conclusion}{מסקנות}
+\dotfill \englishTOCpage{chapter:conclusion}\\[0.2em]
+\hyperlink{chapter:bib}{ביבליוגרפיה}
+\dotfill \englishTOCpage{toc:bibliography}\\[0.2em]
+\hyperlink{chapter:hebrew:summary}{תקציר}
+\dotfill \LR{\pageref*{toc:hebrew:summary}}\\[0.2em]
+\hyperlink{chapter:hebrew:abstract}{תמצית}
+\dotfill \LR{\pageref*{toc:hebrew:abstract}}\\[0.2em]
+}
+\end{flushright}
+\newpage
+
+% ---------------------------------------------------------------------------
+% Hebrew summary (תקציר). The \hypertarget is what the English TOC and the
+% Hebrew TOC link to; the \label is where both TOCs read its page number.
+% ---------------------------------------------------------------------------
+\noindent
+{\huge\textbf{תקציר}}
+\vspace{.5cm}
+\hypertarget{chapter:hebrew:summary}{}\label{toc:hebrew:summary}%
+
+\large
+חיבור זה מדגים תבנית לעבודת גמר באוניברסיטת בן-גוריון בנגב.
+החלק האנגלי של העבודה נכתב בקובץ נפרד, ואילו העמודים העבריים, התקציר והתמצית, מקובצים בסוף הכרך כנדרש בהנחיות האוניברסיטה.
+שני החלקים מקומפלים בנפרד ומאוחדים לקובץ אחד, שבו כל הקישורים פועלים בשני הכיוונים.
+
+בעיות אופטימיזציה רבות הן
+\en{NP}-קשות
+\hcite{Karp72,GJ79},
+ובכל זאת יש לפתור אותן.
+עבודה זו בוחנת בעיה כזו באמצעות תורת הסיבוכיות הפרמטרית
+\hcite{downey2013fundamentals,cygan2015parameterized},
+מסגרת המודדת את זמן הריצה לא רק כפונקציה של גודל הקלט
+$n$
+אלא גם כפונקציה של פרמטר משני
+$k$,
+שבמקרים רבים הוא קטן בפועל.
+אלגוריתם שזמן ריצתו
+$f(k)\cdot n^{O(1)}$
+נקרא אלגוריתם יעיל ביחס לפרמטר קבוע
+\en{(fixed-parameter tractable)}.
+
+התוצאה המרכזית של העבודה היא כי הבעיה פתירה בזמן
+$O(2^k\cdot n)$,
+כאשר
+$k$
+הוא מספר המכונות
+(משפט
+\enref{thm:main}{thm:main}).
+מספר המשפט בשורה הקודמת נקרא אוטומטית מהקומפילציה של החלק האנגלי, והלחיצה עליו מובילה למשפט עצמו.
+ההוכחה מתבססת על גרף הקונפליקט של הקלט
+(ראו הגדרה
+\enref{def:conflictgraph}{def:conflictgraph}
+ואיור
+\enref{fig:example}{fig:example}).
+מנגד, אנו מראים כי הבעיה
+\en{NP}-קשה
+גם כאשר כל זמני העיבוד שווים
+(משפט
+\enref{thm:hardness}{thm:hardness}).
+\newpage
+
+% ---------------------------------------------------------------------------
+% Hebrew abstract (תמצית): the Hebrew counterpart of Main_pages/abstract.tex.
+% ---------------------------------------------------------------------------
+\setstretch{1.45}
+\noindent
+{\huge\textbf{תמצית}}
+\vspace{.5cm}
+\hypertarget{chapter:hebrew:abstract}{}\label{toc:hebrew:abstract}%
+
+\large
+מסמך זה הוא תבנית לעבודת גמר באוניברסיטת בן-גוריון בנגב.
+הוא מציג מערך עבודה שלם לעבודה הכתובה באנגלית, עם התקציר והתמצית בעברית שהאוניברסיטה דורשת בסוף הכרך, המופקים כקובץ אחד שבו הקישורים פועלים בשני הכיוונים.
+
+כל מה שעבודה אמיתית זקוקה לו מופיע לפחות פעם אחת: פרקים וסעיפים ממוספרים, משפטים המנוסחים במבוא וחוזרים עם הוכחתם בהמשך, הגדרות, אלגוריתם, איור, טבלה, ציטוטים, ותוכן עניינים הכולל גם את העמודים העבריים.
+לחלק העברי תוכן עניינים משלו, שמספרי הפרקים והעמודים בו נקראים אוטומטית מהקומפילציה של החלק האנגלי, ושורותיו הן קישורים אל הפרקים באנגלית.
+
+החליפו תמצית זו בתמצית של העבודה שלכם.
+\newpage
+
+% ---------------------------------------------------------------------------
+% Hebrew cover page: the LAST page of the bound thesis (read from the back).
+% Its fields come from thesis_info.tex.
+% ---------------------------------------------------------------------------
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        \includegraphics[width=0.1\textwidth]{Main_pages/bgu.png}\\
+        \textbf{אוניברסיטת בן-גוריון בנגב}\\
+        \thesisfacultyhe\\
+        \thesisdepartmenthe
+
+        \vspace{2cm}
+
+        {\Huge \textbf{\thesistitlehe}}
+
+        \vspace{1.5cm}
+
+        \thesisdegreetexthe~\en{(PhD)}
+
+        \vspace{1cm}
+
+        \textbf{\thesisauthornamehe}
+
+        \vspace{1cm}
+
+        בהנחיית \textbf{\thesissupervisernamehe}
+
+        \vfill
+
+        \thesismonthhe \quad \en{\thesisyear}
+    \end{center}
+\end{titlepage}
+
+\end{document}

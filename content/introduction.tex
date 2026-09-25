@@ -1,0 +1,54 @@
+% ---------------------------------------------------------------------------
+% content/introduction.tex
+%
+% Conventions demonstrated here (they matter for the Hebrew pages):
+%
+%   \linkedsection{<key>}{<Title>}    a \section carrying the anchor target:sec:<key>, which
+%                                   the Hebrew TOC links to, and the label toc:sec:<key>,
+%                                   from which it reads the number and page (see main.tex)
+%
+%   \begin{restatable}{theorem}{MainTheorem}  state a result here, restate it with
+%   \label{thm:main}\hypertarget{target:thm:main}{}   \MainTheorem* in a later chapter
+%
+%   figures/definitions get \hypertarget{target:fig:<key>}{} right after \begin{figure}
+% ---------------------------------------------------------------------------
+
+\linkedsection{motivation}{Motivation}
+
+Many optimisation problems that arise in practice are \NP-hard \cite{Karp72,GJ79}, and yet they have to be solved.
+This thesis studies one such problem through the lens of parameterized complexity \cite{downey2013fundamentals,cygan2015parameterized}, a framework that measures running time not only in the input size $n$ but also in a secondary parameter $k$ that is often small in practice.
+An algorithm with running time $f(k)\cdot n^{O(1)}$ for some computable function $f$ is called \emph{fixed-parameter tractable} (\FPT).
+
+The introduction of a thesis typically states its main results with forward references to the chapters that prove them.
+The template shows how to do that so that the statement in the introduction and the statement in the chapter are the same object, and so that the Hebrew summary can link to the theorem and quote its number automatically.
+
+\begin{restatable}{theorem}{MainTheorem}
+\label{thm:main}\hypertarget{target:thm:main}{}%
+\textsc{Template Problem} is solvable in $O(2^k \cdot n)$ time, where $k$ is the number of machines.
+\end{restatable}
+
+\Cref{thm:main} is proved in \Cref{sec:algorithms} of \Cref{chapter:results}.
+The proof relies on the conflict graph of the instance, an example of which is shown in \Cref{fig:example}.
+
+\begin{figure}[htb]
+\hypertarget{target:fig:example}{}%
+    \centering
+    \begin{tikzpicture}[every node/.style={circle,draw,minimum size=7mm,inner sep=0pt}]
+        \node (a) {$a$};
+        \node (b) [right=12mm of a] {$b$};
+        \node (c) [right=12mm of b] {$c$};
+        \node (d) [below=10mm of b] {$d$};
+        \draw (a) -- (b) -- (c);
+        \draw (a) -- (d) -- (c);
+        \draw (b) -- (d);
+    \end{tikzpicture}
+    \caption{The conflict graph of a small instance. Two jobs are adjacent if their intervals overlap. \Cref{def:conflictgraph} gives the formal definition.}
+    \label{fig:example}
+\end{figure}
+
+\linkedsection{contribution}{Contribution and Outline}
+
+\Cref{chapter:prelim} fixes notation and defines the conflict graph.
+\Cref{chapter:results} contains the hardness result (\Cref{sec:hardness}) and the algorithm (\Cref{sec:algorithms}) behind \Cref{thm:main}, together with an experimental table.
+The unnumbered conclusion lists open questions.
+Everything after the bibliography is in Hebrew: the summary and the abstract that the university requires, followed by the Hebrew cover page, which is the last page of the bound volume.
