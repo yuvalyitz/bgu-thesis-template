@@ -42,6 +42,8 @@
 \setdefaultlanguage{hebrew}    % headings and paragraphs are right-to-left
 \setotherlanguage{english}
 \newfontfamily\hebrewfont[Script=Hebrew,Scale=MatchLowercase]{David CLM}
+% polyglossia needs a Hebrew monospace font as soon as \texttt appears in Hebrew text
+\newfontfamily\hebrewfonttt[Script=Hebrew,Scale=MatchLowercase]{David CLM}
 
 \usepackage{bidi}
 
@@ -87,22 +89,38 @@
 {\Large
 \englishTOCnumber{chapter:intro}.\ \hyperlink{chapter:intro}{מבוא}
 \dotfill \englishTOCpage{chapter:intro}\\[0.2em]
-\hspace{2em}\englishTOCnumber{toc:sec:motivation}\ \hyperlink{target:sec:motivation}{מוטיבציה}
-\dotfill \englishTOCpage{toc:sec:motivation}\\[0.1em]
-\hspace{2em}\englishTOCnumber{toc:sec:contribution}\ \hyperlink{target:sec:contribution}{תרומת המחקר ומבנה החיבור}
-\dotfill \englishTOCpage{toc:sec:contribution}\\[0.2em]
-\englishTOCnumber{chapter:prelim}.\ \hyperlink{chapter:prelim}{מושגים ומונחים}
-\dotfill \englishTOCpage{chapter:prelim}\\[0.2em]
-\hspace{2em}\englishTOCnumber{toc:sec:notation}\ \hyperlink{target:sec:notation}{סימונים}
-\dotfill \englishTOCpage{toc:sec:notation}\\[0.1em]
-\hspace{2em}\englishTOCnumber{toc:sec:graphs}\ \hyperlink{target:sec:graphs}{גרפי קונפליקט}
-\dotfill \englishTOCpage{toc:sec:graphs}\\[0.2em]
-\englishTOCnumber{chapter:results}.\ \hyperlink{chapter:results}{פרק עם תוצאות}
-\dotfill \englishTOCpage{chapter:results}\\[0.2em]
-\hspace{2em}\englishTOCnumber{toc:sec:hardness}\ \hyperlink{target:sec:hardness}{תוצאות קושי}
-\dotfill \englishTOCpage{toc:sec:hardness}\\[0.1em]
-\hspace{2em}\englishTOCnumber{toc:sec:algorithms}\ \hyperlink{target:sec:algorithms}{אלגוריתמים}
-\dotfill \englishTOCpage{toc:sec:algorithms}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:what}\ \hyperlink{target:sec:what}{מה התבנית נותנת}
+\dotfill \englishTOCpage{toc:sec:what}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:quickstart}\ \hyperlink{target:sec:quickstart}{התחלה מהירה}
+\dotfill \englishTOCpage{toc:sec:quickstart}\\[0.2em]
+\englishTOCnumber{chapter:build}.\ \hyperlink{chapter:build}{תהליך הבנייה}
+\dotfill \englishTOCpage{chapter:build}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:script}\ \hyperlink{target:sec:script}{מה הסקריפט עושה}
+\dotfill \englishTOCpage{toc:sec:script}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:settle}\ \hyperlink{target:sec:settle}{מדוע שני השלבים הראשונים חוזרים}
+\dotfill \englishTOCpage{toc:sec:settle}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:troubleshooting}\ \hyperlink{target:sec:troubleshooting}{גופנים, אוברליף ופתרון תקלות}
+\dotfill \englishTOCpage{toc:sec:troubleshooting}\\[0.2em]
+\englishTOCnumber{chapter:links}.\ \hyperlink{chapter:links}{עוגנים וקישורים בין שני החלקים}
+\dotfill \englishTOCpage{chapter:links}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:anchors}\ \hyperlink{target:sec:anchors}{עוגנים ותוויות}
+\dotfill \englishTOCpage{toc:sec:anchors}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:sections}\ \hyperlink{target:sec:sections}{פרקים וסעיפים}
+\dotfill \englishTOCpage{toc:sec:sections}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:objects}\ \hyperlink{target:sec:objects}{משפטים, איורים, טבלאות והגדרות}
+\dotfill \englishTOCpage{toc:sec:objects}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:merge}\ \hyperlink{target:sec:merge}{שלב המיזוג}
+\dotfill \englishTOCpage{toc:sec:merge}\\[0.2em]
+\englishTOCnumber{chapter:hebrew}.\ \hyperlink{chapter:hebrew}{כתיבת העמודים העבריים}
+\dotfill \englishTOCpage{chapter:hebrew}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:rtl}\ \hyperlink{target:sec:rtl}{טקסט מימין לשמאל וקטעים לטיניים}
+\dotfill \englishTOCpage{toc:sec:rtl}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:hcite}\ \hyperlink{target:sec:hcite}{ציטוטים}
+\dotfill \englishTOCpage{toc:sec:hcite}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:enref}\ \hyperlink{target:sec:enref}{הפניות לתוצאות באנגלית}
+\dotfill \englishTOCpage{toc:sec:enref}\\[0.1em]
+\hspace{2em}\englishTOCnumber{toc:sec:hebrewtoc}\ \hyperlink{target:sec:hebrewtoc}{תוכן העניינים העברי}
+\dotfill \englishTOCpage{toc:sec:hebrewtoc}\\[0.2em]
 \hyperlink{chapter:conclusion}{מסקנות}
 \dotfill \englishTOCpage{chapter:conclusion}\\[0.2em]
 \hyperlink{chapter:bib}{ביבליוגרפיה}
@@ -125,44 +143,47 @@
 \hypertarget{chapter:hebrew:summary}{}\label{toc:hebrew:summary}%
 
 \large
-חיבור זה מדגים תבנית לעבודת גמר באוניברסיטת בן-גוריון בנגב.
-החלק האנגלי של העבודה נכתב בקובץ נפרד, ואילו העמודים העבריים, התקציר והתמצית, מקובצים בסוף הכרך כנדרש בהנחיות האוניברסיטה.
-שני החלקים מקומפלים בנפרד ומאוחדים לקובץ אחד, שבו כל הקישורים פועלים בשני הכיוונים.
+חיבור זה הוא תבנית לעבודת גמר באוניברסיטת בן-גוריון בנגב, והוא גם המדריך לשימוש בה.
+החלק האנגלי נכתב במסמך אחד ומקומפל עם
+\en{pdfLaTeX},
+והעמודים העבריים, תוכן העניינים, התקציר, התמצית והכריכה העברית, נכתבים במסמך שני ומקומפלים עם
+\en{XeLaTeX}.
+הסקריפט
+\en{compile\_thesis.sh}
+בונה את שניהם, חוזר על הבנייה עד ששני המסמכים קוראים זה מזה את מספרי העמודים הנכונים, ומאחד אותם לקובץ אחד
+(ראו איור
+\enref{fig:pipeline}{fig:pipeline}).
 
-בעיות אופטימיזציה רבות הן
+\textbf{ציטוטים.}
+ציטוט בתוך טקסט עברי נכתב בפקודה
+\en{\texttt{\textbackslash hcite}}
+בדיוק כמו
+\en{\texttt{\textbackslash cite}}:
+לדוגמה, בעיות רבות הן
 \en{NP}-קשות
 \hcite{Karp72,GJ79},
-ובכל זאת יש לפתור אותן.
-עבודה זו בוחנת בעיה כזו באמצעות תורת הסיבוכיות הפרמטרית
-\hcite{downey2013fundamentals,cygan2015parameterized},
-מסגרת המודדת את זמן הריצה לא רק כפונקציה של גודל הקלט
-$n$
-אלא גם כפונקציה של פרמטר משני
-$k$,
-שבמקרים רבים הוא קטן בפועל.
-אלגוריתם שזמן ריצתו
-$f(k)\cdot n^{O(1)}$
-נקרא אלגוריתם יעיל ביחס לפרמטר קבוע
-\en{(fixed-parameter tractable)}.
+ותורת הסיבוכיות הפרמטרית
+\hcite{downey2013fundamentals,cygan2015parameterized}
+מציעה דרך להתמודד איתן.
+התוויות בסוגריים זהות לאלו שברשימה הביבליוגרפית האנגלית, והלחיצה עליהן מובילה לערך המתאים שם.
 
-התוצאה המרכזית של העבודה היא כי הבעיה פתירה בזמן
-$O(2^k\cdot n)$,
-כאשר
-$k$
-הוא מספר המכונות
-(משפט
-\enref{thm:main}{thm:main}).
-מספר המשפט בשורה הקודמת נקרא אוטומטית מהקומפילציה של החלק האנגלי, והלחיצה עליו מובילה למשפט עצמו.
-ההוכחה מתבססת על גרף הקונפליקט של הקלט
-(ראו הגדרה
-\enref{def:conflictgraph}{def:conflictgraph}
-ואיור
-\enref{fig:example}{fig:example}).
-מנגד, אנו מראים כי הבעיה
-\en{NP}-קשה
-גם כאשר כל זמני העיבוד שווים
-(משפט
-\enref{thm:hardness}{thm:hardness}).
+\textbf{עוגנים.}
+כל אובייקט בחלק האנגלי שנושא עוגן בשם
+\en{\texttt{target:...}}
+ניתן לקישור מכאן (הגדרה
+\enref{def:anchor}{def:anchor}).
+הפקודה
+\en{\texttt{\textbackslash enref}}
+מדפיסה את מספרו של האובייקט, כפי שנקרא מהבנייה האנגלית, והופכת אותו לקישור:
+כך, המשפט המרכזי של התבנית הוא משפט
+\enref{thm:main}{thm:main},
+ומוסכמות השמות מסוכמות בטבלה
+\enref{tab:naming}{tab:naming}.
+המספרים בשורות אלו אינם כתובים בקובץ העברי, ולכן מספור מחדש של החלק האנגלי אינו שובר אותם.
+
+\textbf{תוכן העניינים.}
+כל שורה בתוכן העניינים העברי בנויה משלושה רכיבים: מספר הפרק או הסעיף, הכותרת העברית כקישור, ומספר העמוד.
+המספר והעמוד נקראים מהבנייה האנגלית; הכותרת והסדר הם באחריות הכותב.
 \newpage
 
 % ---------------------------------------------------------------------------
@@ -175,12 +196,8 @@ $k$
 \hypertarget{chapter:hebrew:abstract}{}\label{toc:hebrew:abstract}%
 
 \large
-מסמך זה הוא תבנית לעבודת גמר באוניברסיטת בן-גוריון בנגב.
-הוא מציג מערך עבודה שלם לעבודה הכתובה באנגלית, עם התקציר והתמצית בעברית שהאוניברסיטה דורשת בסוף הכרך, המופקים כקובץ אחד שבו הקישורים פועלים בשני הכיוונים.
-
-כל מה שעבודה אמיתית זקוקה לו מופיע לפחות פעם אחת: פרקים וסעיפים ממוספרים, משפטים המנוסחים במבוא וחוזרים עם הוכחתם בהמשך, הגדרות, אלגוריתם, איור, טבלה, ציטוטים, ותוכן עניינים הכולל גם את העמודים העבריים.
-לחלק העברי תוכן עניינים משלו, שמספרי הפרקים והעמודים בו נקראים אוטומטית מהקומפילציה של החלק האנגלי, ושורותיו הן קישורים אל הפרקים באנגלית.
-
+מסמך זה הוא תבנית לעבודת גמר באוניברסיטת בן-גוריון בנגב, שבה חלק אנגלי וחלק עברי מופקים כקובץ אחד שהקישורים בו פועלים בשני הכיוונים.
+החלק האנגלי מסביר את תהליך הבנייה, את מוסכמות העוגנים והתוויות המקשרות בין שני החלקים, ואת הפקודות לכתיבת העמודים העבריים, ומדגים בדרך כל רכיב שעבודה אמיתית זקוקה לו: פרקים וסעיפים, משפט המנוסח במבוא ומוכח בהמשך, הגדרה, איור, טבלה, אלגוריתם, קטעי קוד וציטוטים.
 החליפו תמצית זו בתמצית של העבודה שלכם.
 \newpage
 

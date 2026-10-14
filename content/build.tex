@@ -1,0 +1,67 @@
+% ---------------------------------------------------------------------------
+% content/build.tex -- how compile_thesis.sh works and why.
+% ---------------------------------------------------------------------------
+
+\linkedsection{script}{What the Script Does}
+
+\texttt{compile\_thesis.sh} needs TeX Live (or MacTeX) with \texttt{latexmk}, \texttt{pdflatex}, \texttt{xelatex} and \texttt{biber}, and Python~3 with the \texttt{pikepdf} package.
+It runs the three steps of \Cref{fig:pipeline}, all inside the git-ignored folder \texttt{build/}.
+
+\begin{figure}[htb]
+\hypertarget{target:fig:pipeline}{}%
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        box/.style={draw,rounded corners,minimum height=9mm,minimum width=27mm,align=center,font=\small},
+        arr/.style={-{Stealth[length=2.5mm]},thick}]
+        \node[box] (en) {\texttt{main.tex}\\pdfLaTeX + biber};
+        \node[box,below=9mm of en] (he) {\texttt{hebrew\_pages.tex}\\XeLaTeX + biber};
+        \node[box,right=22mm of en] (enpdf) {\texttt{build/main.pdf}};
+        \node[box,right=22mm of he] (hepdf) {\texttt{build/hebrew\_pages.pdf}};
+        \node[box,right=22mm of $(enpdf)!0.5!(hepdf)$] (merge) {\texttt{merge\_thesis.py}};
+        \node[box,right=12mm of merge] (out) {\texttt{build/thesis.pdf}};
+        \draw[arr] (en) -- (enpdf);
+        \draw[arr] (he) -- (hepdf);
+        \draw[arr] (enpdf) -- (merge);
+        \draw[arr] (hepdf) -- (merge);
+        \draw[arr] (merge) -- (out);
+        \draw[arr,dashed] (en.south) to[bend right=25] node[left,font=\scriptsize,align=right] {page numbers,\\\texttt{LastPage}} (he.north);
+        \draw[arr,dashed] (he.north east) to[bend right=25] node[right,font=\scriptsize,align=left] {Hebrew\\page numbers} (en.south east);
+    \end{tikzpicture}}
+    \caption{The build. Solid arrows are the three steps of the script; dashed arrows are the labels each document reads from the other's auxiliary file, which is why the first two steps are repeated until both settle.}
+    \label{fig:pipeline}
+\end{figure}
+
+\begin{enumerate}
+    \item \texttt{latexmk -pdf main.tex} produces \texttt{build/main.pdf}. \texttt{latexmk} runs biber and repeats pdfLaTeX until the references are stable.
+    \item \texttt{latexmk -xelatex hebrew\_pages.tex} produces \texttt{build/hebrew\_pages.pdf}.
+    \item \texttt{merge\_thesis.py} appends the Hebrew pages to the English PDF and rewires the cross-document links (\Cref{sec:merge}). The result is \texttt{build/thesis.pdf}.
+\end{enumerate}
+
+\texttt{./compile\_thesis.sh clean} deletes \texttt{build/}. A clean build takes a few minutes; later builds only redo what changed.
+
+\linkedsection{settle}{Why the First Two Steps Repeat}
+
+Each document reads labels from the other.
+The Hebrew document continues the page numbering after the English \texttt{LastPage} label and prints the English chapter numbers and pages in its table of contents.
+The English document, in turn, needs the page numbers of the Hebrew summary and abstract for its own table of contents.
+Both documents load the \texttt{xr-hyper} package, which imports the labels of another document's \texttt{.aux} file under a prefix: \texttt{en-} for English labels read by the Hebrew document, \texttt{he-} for Hebrew labels read by the English one.
+
+Because each side depends on the other, the script compiles English, then Hebrew, then checks whether either \texttt{.aux} file changed, and repeats the pair until neither does.
+On a clean build the first English pass prints page~0 for the Hebrew entries, since no Hebrew \texttt{.aux} exists yet; the second pass fixes it.
+From the second pass on, the script passes \texttt{-g} to \texttt{latexmk}, because \texttt{latexmk} does not know that the other document's \texttt{.aux} file is a dependency and would otherwise report that there is nothing to do.
+
+\linkedsection{troubleshooting}{Fonts, Overleaf and Troubleshooting}
+
+\paragraph{Fonts.} The Hebrew pages use \emph{Linux Libertine O} for Latin text, \emph{David CLM} for Hebrew and \emph{Latin Modern Roman} for Latin fragments inside Hebrew paragraphs. All three ship with TeX Live (packages \texttt{libertine}, \texttt{culmus}, \texttt{lm}), but XeTeX on macOS only finds a font by name if macOS itself knows it. If the build stops with \texttt{The font "Linux Libertine O" cannot be found}, run \texttt{./compile\_thesis.sh install-fonts} once; it copies the font files into \texttt{\textasciitilde/Library/Fonts}. On Linux and on Overleaf this is not needed.
+
+\paragraph{Overleaf.} Overleaf cannot run the merge script. Compile \texttt{main.tex} with pdfLaTeX and \texttt{hebrew\_pages.tex} with XeLaTeX (two projects, or one project with the main file switched), download both PDFs and merge locally with \texttt{python3 merge\_thesis.py english.pdf hebrew.pdf out.pdf}.
+
+\paragraph{Symptoms and causes.}
+\begin{itemize}
+    \item \emph{Hebrew Summary~0 in the English TOC}: the English part was not rebuilt after the Hebrew part. Run the script again rather than \texttt{latexmk} by hand.
+    \item \emph{Merge warning about names that exist in neither PDF}: a Hebrew \verb|\hyperlink| has no matching anchor in the English source. See \Cref{sec:merge}.
+    \item \emph{Nonsense errors such as \texttt{Missing \textbackslash begin\{document\}} in \texttt{build/main.aux}}: a build was interrupted or two ran at once and an \texttt{.aux} file is truncated. Run \texttt{./compile\_thesis.sh clean} and build again.
+    \item \emph{biber: extracting arm64 binary with lipo failed} (macOS, after a system update): the universal \texttt{biber} shipped with MacTeX unpacks itself with \texttt{lipo}, which newer command line tools reject. Extract the slice once by hand, \texttt{lipo -thin arm64 \$(which biber) -output \textasciitilde/bin/biber}, and put \texttt{\textasciitilde/bin} first on your \texttt{PATH}.
+    \item \emph{Package bidi error about xcolor}: in \texttt{hebrew\_pages.tex}, any package that loads \texttt{xcolor} must come before \texttt{bidi} and \texttt{polyglossia}. The template loads \texttt{xcolor} first for this reason.
+\end{itemize}

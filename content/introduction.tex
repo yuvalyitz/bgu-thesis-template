@@ -1,54 +1,62 @@
 % ---------------------------------------------------------------------------
 % content/introduction.tex
-%
-% Conventions demonstrated here (they matter for the Hebrew pages):
-%
-%   \linkedsection{<key>}{<Title>}    a \section carrying the anchor target:sec:<key>, which
-%                                   the Hebrew TOC links to, and the label toc:sec:<key>,
-%                                   from which it reads the number and page (see main.tex)
-%
-%   \begin{restatable}{theorem}{MainTheorem}  state a result here, restate it with
-%   \label{thm:main}\hypertarget{target:thm:main}{}   \MainTheorem* in a later chapter
-%
-%   figures/definitions get \hypertarget{target:fig:<key>}{} right after \begin{figure}
+% Every chapter file is plain LaTeX. Sections use \linkedsection{<key>}{<Title>}
+% (defined in main.tex) so that the Hebrew table of contents can link to them
+% and print their number and page. See Chapter 3 for the rules.
 % ---------------------------------------------------------------------------
 
-\linkedsection{motivation}{Motivation}
+\linkedsection{what}{What This Template Gives You}
 
-Many optimisation problems that arise in practice are \NP-hard \cite{Karp72,GJ79}, and yet they have to be solved.
-This thesis studies one such problem through the lens of parameterized complexity \cite{downey2013fundamentals,cygan2015parameterized}, a framework that measures running time not only in the input size $n$ but also in a secondary parameter $k$ that is often small in practice.
-An algorithm with running time $f(k)\cdot n^{O(1)}$ for some computable function $f$ is called \emph{fixed-parameter tractable} (\FPT).
+A thesis at Ben-Gurion University is written in English and bound with a Hebrew summary, a Hebrew abstract and a Hebrew cover at its end, read from the back.
+LaTeX cannot typeset both halves in one document without pain, so this template keeps them apart: \texttt{main.tex} is the English thesis, compiled with pdfLaTeX, and \texttt{hebrew\_pages.tex} is the Hebrew part, compiled with XeLaTeX.
+A script compiles both and merges them into one PDF, the one you are reading, in which
 
-The introduction of a thesis typically states its main results with forward references to the chapters that prove them.
-The template shows how to do that so that the statement in the introduction and the statement in the chapter are the same object, and so that the Hebrew summary can link to the theorem and quote its number automatically.
+\begin{itemize}
+    \item the English table of contents lists the Hebrew pages with their real page numbers,
+    \item the Hebrew table of contents shows the English chapter and section numbers and pages, read automatically from the English build, and each line of it is a link into the English part,
+    \item Hebrew text can cite the bibliography and refer to any English theorem, figure or definition by a link that also prints its number,
+    \item page numbers run continuously through both parts, and
+    \item every link keeps working after the PDF has been opened and re-saved by any viewer.
+\end{itemize}
+
+This document is both the demonstration and the manual.
+\Cref{chapter:build} explains the build, \Cref{chapter:links} the anchors that connect the two parts, and \Cref{chapter:hebrew} the commands for writing Hebrew.
+Along the way, every construct a thesis needs appears at least once: a theorem stated here and restated with its proof later, a definition, a figure, a table, an algorithm, code listings, citations such as \cite{Karp72,GJ79} or \cite{downey2013fundamentals,cygan2015parameterized}, and cross-references with \verb|\Cref|.
+
+The whole idea of the template fits in one statement, which \Cref{chapter:links} proves.
 
 \begin{restatable}{theorem}{MainTheorem}
 \label{thm:main}\hypertarget{target:thm:main}{}%
-\textsc{Template Problem} is solvable in $O(2^k \cdot n)$ time, where $k$ is the number of machines.
+Every object in the English part that carries a named anchor can be linked to from the Hebrew pages, and the link survives any PDF viewer.
 \end{restatable}
 
-\Cref{thm:main} is proved in \Cref{sec:algorithms} of \Cref{chapter:results}.
-The proof relies on the conflict graph of the instance, an example of which is shown in \Cref{fig:example}.
+\linkedsection{quickstart}{Quick Start}
 
-\begin{figure}[htb]
-\hypertarget{target:fig:example}{}%
+\begin{enumerate}
+    \item Fill in \texttt{thesis\_info.tex}: title, author, supervisor, department, degree and date, in English and Hebrew. Both documents read this file, so the three cover pages and the abstracts agree.
+    \item Write your chapters in \texttt{content/} and list them in \texttt{main.tex} by copying the chapter block shown in \Cref{sec:sections}.
+    \item Write the Hebrew summary and abstract in \texttt{hebrew\_pages.tex}, and mirror your chapters in its table of contents (\Cref{sec:hebrewtoc}).
+    \item Run \texttt{./compile\_thesis.sh} and open \texttt{build/thesis.pdf}. The merge step must print no warning (\Cref{sec:merge}).
+\end{enumerate}
+
+\Cref{tab:files} lists the files of the template.
+
+\begin{table}[htb]
     \centering
-    \begin{tikzpicture}[every node/.style={circle,draw,minimum size=7mm,inner sep=0pt}]
-        \node (a) {$a$};
-        \node (b) [right=12mm of a] {$b$};
-        \node (c) [right=12mm of b] {$c$};
-        \node (d) [below=10mm of b] {$d$};
-        \draw (a) -- (b) -- (c);
-        \draw (a) -- (d) -- (c);
-        \draw (b) -- (d);
-    \end{tikzpicture}
-    \caption{The conflict graph of a small instance. Two jobs are adjacent if their intervals overlap. \Cref{def:conflictgraph} gives the formal definition.}
-    \label{fig:example}
-\end{figure}
-
-\linkedsection{contribution}{Contribution and Outline}
-
-\Cref{chapter:prelim} fixes notation and defines the conflict graph.
-\Cref{chapter:results} contains the hardness result (\Cref{sec:hardness}) and the algorithm (\Cref{sec:algorithms}) behind \Cref{thm:main}, together with an experimental table.
-The unnumbered conclusion lists open questions.
-Everything after the bibliography is in Hebrew: the summary and the abstract that the university requires, followed by the Hebrew cover page, which is the last page of the bound volume.
+    \caption{The files of the template.}
+    \label{tab:files}
+    \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.58\textwidth}@{}}
+        \toprule
+        File & Role \\
+        \midrule
+        \texttt{thesis\_info.tex} & title, names, department, degree, date (English and Hebrew) \\
+        \texttt{main.tex} & the English document: preamble, front matter, chapter list, bibliography \\
+        \texttt{content/*.tex} & one file per chapter \\
+        \texttt{Main\_pages/} & cover, signature page, abstract, acknowledgements, affidavit, logo \\
+        \texttt{hebrew\_pages.tex} & the Hebrew document: Hebrew TOC, summary, abstract, Hebrew cover \\
+        \texttt{bibliography/references.bib} & the bibliography, shared by both documents \\
+        \texttt{compile\_thesis.sh} & builds everything into \texttt{build/thesis.pdf} \\
+        \texttt{merge\_thesis.py} & concatenates the two PDFs and rewires the links \\
+        \bottomrule
+    \end{tabular}
+\end{table}

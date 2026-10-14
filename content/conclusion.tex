@@ -3,13 +3,22 @@
 % added to the table of contents and anchored for the Hebrew TOC).
 % ---------------------------------------------------------------------------
 
-This thesis showed that \textsc{Template Problem} is \NP-hard (\Cref{thm:hardness}) but fixed-parameter tractable in the number of machines (\Cref{thm:main}).
-Two questions remain open.
+Before submitting, check the following.
+
+\begin{itemize}
+    \item \texttt{thesis\_info.tex} is filled in, and the two English cover pages and the Hebrew cover agree.
+    \item The affidavit is included if your department requires it (uncomment its \verb|\include| line in \texttt{main.tex}).
+    \item The merge step prints no warning, and every line of the Hebrew table of contents shows a number and a page.
+    \item The English table of contents shows real page numbers for \emph{Hebrew Summary} and \emph{Hebrew Abstract}.
+    \item \texttt{build/thesis.pdf} opened in Preview or Acrobat, a few Hebrew links clicked.
+\end{itemize}
+
+Two things the template does not decide for you.
 
 \begin{openq}
-Does \textsc{Template Problem} admit a polynomial kernel when parameterized by the number of machines?
+Printed or on screen? The \texttt{geometry} package is loaded with \texttt{twoside}, so chapters start on odd pages and blank pages are inserted where needed, as in a bound volume. For a PDF that is only read on screen, add \texttt{openany} to the \verb|\documentclass| options.
 \end{openq}
 
 \begin{openq}
-Is the running time of \Cref{thm:main} optimal under the Exponential Time Hypothesis?
+One supervisor or two? \texttt{thesis\_info.tex} defines one. For two, add \verb|\thesissecondsupervisername| and its Hebrew twin there, and use them in \texttt{Main\_pages/cover\_page.tex}, \texttt{Main\_pages/title\_page.tex} and the Hebrew cover at the end of \texttt{hebrew\_pages.tex}.
 \end{openq}

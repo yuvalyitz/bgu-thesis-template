@@ -1,0 +1,78 @@
+% ---------------------------------------------------------------------------
+% content/hebrewpages.tex -- the commands available in hebrew_pages.tex.
+% ---------------------------------------------------------------------------
+
+\linkedsection{rtl}{Right-to-Left Text and Latin Fragments}
+
+\texttt{hebrew\_pages.tex} sets Hebrew as its default language with the \texttt{polyglossia} package, so ordinary paragraphs are typeset right to left and headings are aligned to the right.
+Inline mathematics such as \verb|$f(k)\cdot n^{O(1)}$| works unchanged.
+A Latin word or phrase inside a Hebrew sentence, however, must be marked, or the bidirectional algorithm will reorder it. The template defines
+
+\begin{lstlisting}
+\newcommand{\en}[1]{\beginL{\fontspec{Latin Modern Roman}#1}\endL}
+\end{lstlisting}
+
+so that \verb|\en{NP}| or \verb|\en{(fixed-parameter tractable)}| is typeset left to right, in a Latin font.
+The year on the Hebrew cover page is set the same way, with \verb|\en{\thesisyear}|.
+
+\linkedsection{hcite}{Citations: the \texttt{\textbackslash hcite} Command}
+\label{sec:hcite}
+
+A citation inside Hebrew text is a Latin fragment too, with one more requirement: it must be a link into the English bibliography.
+The template's command is
+
+\begin{lstlisting}
+\newcommand{\hcite}[1]{\mbox{\LR{{\fontspec{Latin Modern Roman}\cite{#1}}}}}
+\end{lstlisting}
+
+and it is used exactly like \verb|\cite|: \verb|\hcite{Karp72,GJ79}|.
+Three things make it work.
+
+\begin{itemize}
+    \item \verb|\LR| (from the \texttt{bidi} package) and the Latin font keep the citation label readable and left to right; \verb|\mbox| keeps it on one line.
+    \item \texttt{hebrew\_pages.tex} loads the same \texttt{.bib} file with the same \texttt{biblatex} options as \texttt{main.tex}. The \texttt{alphabetic} style derives its labels from author names and years, so the Hebrew document prints \texttt{[Kar72]} for the same entry the English bibliography lists as \texttt{[Kar72]}, even though the Hebrew document prints no bibliography of its own.
+    \item \texttt{biblatex} makes each citation a link to the anchor \texttt{cite.0@<key>}. In the Hebrew PDF alone that anchor is missing; after the merge it is found in the English bibliography and the link is rewired to it (\Cref{sec:merge}).
+\end{itemize}
+
+One rule follows from this: an entry can only be linked to if it appears in the English bibliography, that is, if it is cited (or listed with \verb|\nocite|) somewhere in \texttt{main.tex}. An entry cited only from Hebrew still prints its label, but the merge step reports its link as unresolved.
+
+If you switch the English bibliography to a numeric style, switch the Hebrew document too, and keep in mind that numeric labels then depend on citation order and will differ between the two documents; the links still work, the printed numbers will not match. The alphabetic style avoids the problem.
+
+\linkedsection{enref}{References to English Results: the \texttt{\textbackslash enref} Command}
+
+To refer to an English theorem, figure, definition or table from Hebrew text, use
+
+\begin{lstlisting}
+\newcommand{\enref}[2]{\hyperlink{target:#1}{\englishTOCnumber{#2}}}
+% usage, inside Hebrew text:  (<Hebrew word for Theorem> \enref{thm:main}{thm:main})
+\end{lstlisting}
+
+The first argument is the anchor name without its \texttt{target:} prefix, the second is the label.
+The command prints the object's number, read from the English build, and makes it a link to the anchor, so the Hebrew text needs no hard-coded numbers and does not break when the English part is renumbered.
+The Hebrew summary at the end of this document refers to \Cref{thm:main}, \Cref{def:anchor}, \Cref{fig:pipeline} and \Cref{tab:naming} this way.
+
+Behind \verb|\enref| are the two macros that also drive the Hebrew table of contents:
+
+\begin{lstlisting}
+\newcommand{\englishTOCpage}[1]{\LR{\pageref*{en-#1}}}
+\newcommand{\englishTOCnumber}[1]{\LR{\ref*{en-#1}}}
+\end{lstlisting}
+
+They print a page or a number from an \texttt{en-} label, left to right, and deliberately without a link of their own (the starred forms): the enclosing \verb|\hyperlink| is the link, and the merge script expects exactly one destination per link.
+
+\linkedsection{hebrewtoc}{The Hebrew Table of Contents}
+\label{sec:hebrewtoc}
+
+The Hebrew TOC is written by hand, one line per English chapter or section, in \texttt{hebrew\_pages.tex}.
+Each line combines the three ingredients above: a number, a linked Hebrew title and a page.
+
+\begin{lstlisting}
+\englishTOCnumber{chapter:build}.\ \hyperlink{chapter:build}{<Hebrew chapter title>}
+\dotfill \englishTOCpage{chapter:build}\\[0.2em]
+\hspace{2em}\englishTOCnumber{toc:sec:script}\ \hyperlink{target:sec:script}{<Hebrew section title>}
+\dotfill \englishTOCpage{toc:sec:script}\\[0.1em]
+\end{lstlisting}
+
+Unnumbered chapters (the conclusion, the bibliography) omit the number.
+The last two lines, for the Hebrew summary and abstract, use local labels, since those pages are in the Hebrew document itself; the English TOC reads the same labels through the \texttt{he-} prefix to list them on its side.
+The order of the lines, and the Hebrew titles, are yours to maintain; the numbers and pages are not.

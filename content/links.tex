@@ -1,0 +1,122 @@
+% ---------------------------------------------------------------------------
+% content/links.tex -- the anchor and label conventions.
+% ---------------------------------------------------------------------------
+
+\linkedsection{anchors}{Anchors and Labels}
+
+Two different things connect the Hebrew pages to the English ones, and it helps to keep them apart.
+
+\begin{definition}
+\label{def:anchor}\hypertarget{target:def:anchor}{}%
+An \emph{anchor} is a named position in a PDF, created by \verb|\hypertarget{name}{}| and reached by \verb|\hyperlink{name}{text}|. A \emph{label} is a LaTeX name, created by \verb|\label{name}|, from which \verb|\ref| and \verb|\pageref| print a number and a page.
+\end{definition}
+
+Anchors are what a click follows; labels are what gets printed.
+The Hebrew document can use both across the document boundary: labels through \texttt{xr-hyper}, and anchors through the merge step, since an anchor's name is stored in the PDF.
+The template's convention is to give every object the Hebrew pages may refer to both an anchor and a label, named as in \Cref{tab:naming}.
+
+\begin{table}[htb]
+    \centering
+    \caption{Naming conventions. The Hebrew document reads labels with the prefix \texttt{en-}.}
+    \label{tab:naming}\hypertarget{target:tab:naming}{}%
+    \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.4\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}@{}}
+        \toprule
+        Object & Anchor (for \verb|\hyperlink|) & Label (for \verb|\ref*|, \verb|\pageref*|) \\
+        \midrule
+        Chapter & \texttt{chapter:<key>} & \texttt{chapter:<key>} \\
+        Section & \texttt{target:sec:<key>} & \texttt{toc:sec:<key>} \\
+        Theorem, figure, table, definition & \texttt{target:thm:<key>}, \texttt{target:fig:<key>}, \ldots & \texttt{thm:<key>}, \texttt{fig:<key>}, \ldots \\
+        Bibliography & \texttt{chapter:bib} & \texttt{toc:bibliography} \\
+        Bibliography entry & its bib key & \\
+        Hebrew summary, abstract & \texttt{chapter:hebrew:summary}, \texttt{chapter:hebrew:abstract} & \texttt{toc:hebrew:summary}, \texttt{toc:hebrew:abstract} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\linkedsection{sections}{Chapters and Sections}
+\label{sec:sections}
+
+Every chapter in \texttt{main.tex} follows the same block.
+The \verb|\phantomsection| gives hyperref a correct bookmark, the \verb|\hypertarget| is the anchor the Hebrew TOC links to, and the \verb|\label| is where it reads the chapter number and page.
+
+\begin{lstlisting}
+\cleardoublepage
+\phantomsection
+\hypertarget{chapter:build}{}%
+\chapter{The Build Process}
+\label{chapter:build}
+\input{content/build}
+\end{lstlisting}
+
+Sections use the helper \verb|\linkedsection|, defined in \texttt{main.tex}:
+
+\begin{lstlisting}
+\linkedsection{script}{What the Script Does}
+% expands to
+\section[What the Script Does]{\hypertarget{target:sec:script}{}What the Script Does}
+\label{toc:sec:script}
+\end{lstlisting}
+
+The anchor is placed \emph{inside} the heading on purpose. An anchor written on the line before \verb|\section| is set at the end of the preceding paragraph, so whenever the section happens to start a new page, a click lands at the bottom of the previous one.
+Add your own \verb|\label{sec:...}| after \verb|\linkedsection| for \verb|\Cref|, as this section does.
+
+An unnumbered chapter, such as the conclusion of this document, has no number to read, so it needs only the anchor and a label, plus \verb|\addcontentsline| to appear in the English TOC.
+\Cref{alg:chapter} summarises the steps for adding a chapter that both tables of contents can see.
+
+\begin{algorithm}[htb]
+\caption{Adding a chapter}
+\label{alg:chapter}
+\KwIn{a chapter title, a short key, a Hebrew title}
+write the chapter in \texttt{content/<key>.tex}, using \texttt{\textbackslash linkedsection} for its sections\;
+copy the chapter block into \texttt{main.tex} with \texttt{chapter:<key>} as anchor and label\;
+\ForEach{section in the chapter}{
+    add a line to the Hebrew TOC with \texttt{toc:sec:<key>} and \texttt{target:sec:<key>} (\Cref{sec:hebrewtoc})\;
+}
+add a line for the chapter itself with \texttt{chapter:<key>}\;
+run \texttt{./compile\_thesis.sh} and check that the merge step prints no warning\;
+\end{algorithm}
+
+\linkedsection{objects}{Theorems, Figures, Tables and Definitions}
+\label{sec:objects}
+
+Anything the Hebrew text should be able to point at gets an anchor right after its label.
+For a theorem, the anchor goes at the start of the body; for a figure or table, right after \verb|\begin{figure}| or next to the \verb|\label|.
+
+\begin{lstlisting}
+\begin{restatable}{theorem}{MainTheorem}
+\label{thm:main}\hypertarget{target:thm:main}{}%
+Every object in the English part that carries ...
+\end{restatable}
+
+\begin{figure}[htb]
+\hypertarget{target:fig:pipeline}{}%
+    ...
+    \label{fig:pipeline}
+\end{figure}
+\end{lstlisting}
+
+The theorem above uses \texttt{restatable} from the \texttt{thmtools} package: it is stated in the introduction and restated here with \verb|\MainTheorem*|, keeping its number, so the two statements cannot drift apart.
+
+\MainTheorem*
+
+\begin{proof}
+Let $x$ be an object with anchor \texttt{target:x}.
+The Hebrew source writes \verb|\hyperlink{target:x}{...}|, which XeLaTeX turns into a link whose destination is the \emph{name} \texttt{target:x}.
+Inside the Hebrew PDF alone this name is undefined.
+After the merge, the combined PDF contains both the link and, from the English half, the anchor of that name (\Cref{sec:merge}).
+The merge script then replaces the name in the link by the page and position of the anchor, so the link no longer depends on the name table, which some viewers discard when they re-save a file.
+\end{proof}
+
+\linkedsection{merge}{The Merge Step}
+\label{sec:merge}
+
+\texttt{merge\_thesis.py} appends the pages of \texttt{build/hebrew\_pages.pdf} to \texttt{build/main.pdf}, collects the named anchors of both files, and rewrites every link that refers to a name into an explicit destination, as in the proof above.
+Names defined in both files are taken from the English half, except the \texttt{chapter:hebrew:*} anchors, which are taken from the Hebrew half.
+
+The script prints how many links it resolved and, if any Hebrew link uses a name that neither document defines, a warning listing those names.
+A clean thesis prints no warning.
+The fix is to add the missing \verb|\hypertarget| in the English source.
+As a last resort, the \texttt{ALIASES} table at the top of the script can map a name to one of hyperref's automatic anchors, such as \texttt{section.2.1} or \texttt{theorem.3.1}; those names change whenever numbering changes, so prefer a real anchor.
+
+Citations need no anchors of their own: both documents load the same \texttt{.bib} file with the same \texttt{biblatex} options, and after the merge a Hebrew citation link resolves to the entry in the English bibliography (\Cref{sec:hcite}).
+In addition, \texttt{main.tex} gives every bibliography entry an anchor named by its bib key, so \verb|\hyperlink{Karp72}{...}| works from either side.

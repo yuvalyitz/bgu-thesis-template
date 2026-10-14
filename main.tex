@@ -65,11 +65,19 @@
 \usepackage[shortlabels]{enumitem}
 \usepackage[ruled,vlined,algochapter]{algorithm2e}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{csquotes}
 \usepackage{graphicx}
 \graphicspath{{images/}}
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,arrows.meta,calc}
+
+% Code listings (the chapters show LaTeX snippets)
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,
+        frame=single,framerule=0.3pt,xleftmargin=1em,aboveskip=0.8em,belowskip=0.8em,
+        language=[LaTeX]TeX,texcsstyle=*\bfseries,commentstyle=\itshape\color{black!60},
+        morekeywords={hypertarget,hyperlink,linkedsection,enref,hcite,en,englishTOCnumber,englishTOCpage}}
 \setcounter{secnumdepth}{4}
 
 % ---- Bibliography (biblatex + biber). The Hebrew document loads the same
@@ -121,6 +129,7 @@
 \setstretch{1.1}
 \setlength{\parskip}{0.25em plus 0.1em minus 0.05em}
 \setlength{\parindent}{2em}
+\setlength{\emergencystretch}{3em}   % let TeX stretch lines rather than overflow them around long \texttt words
 
 % ---- Who and what: title, author, supervisor, department, date ----
 \input{thesis_info}
@@ -179,17 +188,24 @@
 
 \cleardoublepage
 \phantomsection
-\hypertarget{chapter:prelim}{}%
-\chapter{Preliminaries}
-\label{chapter:prelim}
-\input{content/preliminaries}
+\hypertarget{chapter:build}{}%
+\chapter{The Build Process}
+\label{chapter:build}
+\input{content/build}
 
 \cleardoublepage
 \phantomsection
-\hypertarget{chapter:results}{}%
-\chapter{A Chapter with Results}
-\label{chapter:results}
-\input{content/results}
+\hypertarget{chapter:links}{}%
+\chapter{Anchors and Links Between the Two Parts}
+\label{chapter:links}
+\input{content/links}
+
+\cleardoublepage
+\phantomsection
+\hypertarget{chapter:hebrew}{}%
+\chapter{Writing the Hebrew Pages}
+\label{chapter:hebrew}
+\input{content/hebrewpages}
 
 % An unnumbered chapter: it needs \addcontentsline to appear in the TOC.
 \cleardoublepage

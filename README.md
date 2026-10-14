@@ -25,7 +25,7 @@ by *Prof. Max Musterman*, that exercises every mechanism once. Build it, open
 |---|---|
 | `thesis_info.tex` | **Title, author, supervisor, department, degree, date** in English and Hebrew. Edit this first; both documents read it. |
 | `main.tex` | The English document (pdfLaTeX + biber): preamble, front matter, chapter list, bibliography. |
-| `content/*.tex` | One file per chapter. The dummy chapters double as examples of every construct. |
+| `content/*.tex` | One file per chapter. The template's chapters are its manual: they explain the build, the anchors and the Hebrew commands, and exercise every construct along the way. |
 | `Main_pages/` | Cover page, signature (title) page, abstract, acknowledgements, affidavit, BGU logo. |
 | `hebrew_pages.tex` | The Hebrew document (XeLaTeX + biber): Hebrew TOC, summary, abstract, Hebrew cover. |
 | `bibliography/references.bib` | The bibliography, shared by both documents. |
@@ -237,6 +237,7 @@ supervisors, add the second name there and in the three cover pages.
 - **`Hebrew Summary ... 0` in the English TOC**: the English part was not rebuilt after the Hebrew part. Run the script again; do not run `latexmk` on `main.tex` by hand between passes.
 - **Merge warning `links point to names that exist in neither PDF`**: a Hebrew `\hyperlink{name}` has no matching `\hypertarget{name}{}` in the English source. Add one (or an alias, see above).
 - **`Missing \begin{document}` in `build/main.aux`, or other nonsense errors after a build was interrupted**: two builds ran at once or one was killed mid-write and the `.aux` file is truncated. Run `./compile_thesis.sh clean` and build again.
+- **`biber: extracting arm64 binary with lipo failed`** (macOS, typically after a system update): MacTeX's universal `biber` unpacks itself with `lipo`, which newer Command Line Tools reject. Extract the slice once: `lipo -thin arm64 $(which biber) -output ~/bin/biber`, then put `~/bin` first on your `PATH`. If `latexmk` then still says biber "gave an error in previous invocation", delete `build/main.fdb_latexmk` or run `./compile_thesis.sh clean`.
 - **Package bidi Error: you have loaded package xcolor after bidi**: any package that loads `xcolor` (tikz, xcolor itself) must be loaded before `bidi`/`polyglossia` in `hebrew_pages.tex`; the template loads `xcolor` first.
 
 ## Checklist before submission
