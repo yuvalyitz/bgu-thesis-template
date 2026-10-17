@@ -3,22 +3,12 @@
 % added to the table of contents and anchored for the Hebrew TOC).
 % ---------------------------------------------------------------------------
 
-Before submitting, check the following.
+This template takes care of the mechanics that make a BGU thesis awkward to typeset: an English body and a Hebrew back part in two documents, compiled by two engines, joined into a single PDF whose tables of contents, page numbers and links agree.
+The conventions are few.
+Chapters are listed in \texttt{main.tex} with an anchor and a label, sections are written with \verb|\linkedsection|, and any theorem, figure or definition the Hebrew text refers to gets an anchor next to its label.
+On the Hebrew side, \verb|\en| marks Latin fragments, \verb|\hcite| cites, and \verb|\enref| links to an English result and prints its number.
+The script compiles both parts until they agree and merges them, and its merge step tells you if a link has nowhere to go.
 
-\begin{itemize}
-    \item \texttt{thesis\_info.tex} is filled in, and the two English cover pages and the Hebrew cover agree.
-    \item The affidavit is included if your department requires it (uncomment its \verb|\include| line in \texttt{main.tex}).
-    \item The merge step prints no warning, and every line of the Hebrew table of contents shows a number and a page.
-    \item The English table of contents shows real page numbers for \emph{Hebrew Summary} and \emph{Hebrew Abstract}.
-    \item \texttt{build/thesis.pdf} opened in Preview or Acrobat, a few Hebrew links clicked.
-\end{itemize}
-
-Two things the template does not decide for you.
-
-\begin{openq}
-Printed or on screen? The \texttt{geometry} package is loaded with \texttt{twoside}, so chapters start on odd pages and blank pages are inserted where needed, as in a bound volume. For a PDF that is only read on screen, add \texttt{openany} to the \verb|\documentclass| options.
-\end{openq}
-
-\begin{openq}
-One supervisor or two? \texttt{thesis\_info.tex} defines one. For two, add \verb|\thesissecondsupervisername| and its Hebrew twin there, and use them in \texttt{Main\_pages/cover\_page.tex}, \texttt{Main\_pages/title\_page.tex} and the Hebrew cover at the end of \texttt{hebrew\_pages.tex}.
-\end{openq}
+To turn the template into your thesis, fill in \texttt{thesis\_info.tex}, replace the chapters in \texttt{content/} and the abstract and acknowledgements in \texttt{Main\_pages/}, write the Hebrew summary and abstract in \texttt{hebrew\_pages.tex}, and keep its table of contents in step with your chapters.
+Include the affidavit if your department requires it, and decide whether the thesis will be printed double-sided or read on screen, which determines whether chapters should open on odd pages.
+Before submission, build from a clean \texttt{build/} folder, make sure the merge step prints no warning, and open the PDF in the viewer your readers will use to click a few links in both directions.
