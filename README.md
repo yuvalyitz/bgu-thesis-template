@@ -19,6 +19,10 @@ The template is filled with a small dummy thesis by *Israel Israeli*, supervised
 by *Prof. Max Musterman*, that exercises every mechanism once. Build it, open
 `build/thesis.pdf`, click around, then replace the content with yours.
 
+**The compiled template is included:** [`bgu-thesis-template.pdf`](bgu-thesis-template.pdf).
+It is also the manual: its chapters explain the build, the anchor conventions and
+the Hebrew commands.
+
 ## Files
 
 | File | What it is |

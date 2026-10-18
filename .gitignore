@@ -15,3 +15,4 @@ build/
 !Main_pages/*.png
 __pycache__/
 .DS_Store
+!bgu-thesis-template.pdf
